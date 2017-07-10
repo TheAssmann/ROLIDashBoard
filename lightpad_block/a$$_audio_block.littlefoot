@@ -1,0 +1,932 @@
+/*
+<metadata description="5x5 grid of notes with custom scale and colour settings. (Custom Scale: Convert three digit hex to int)." target="Lightpad" tags="MPE;MIDI;Melodic">
+<modes>
+  <mode name="a$$_audio_block">
+    <variable name="gradientColour1" value="0xFF0049EA"/>
+    <variable name="gradientColour2" value="0xFF00FF33"/>
+    <variable name="useCustomTrailColour" value="false"/>
+    <variable name="customTrailColour" value="0xFFD3EF1E"/>
+    <variable name="useCustomTonicColour" value="true"/>
+    <variable name="customTonicColour" value="0xFFF307F3"/>
+    <variable name="useCustomScaleColour" value="true"/>
+    <variable name="outOfScaleColour" value="0xFF111111"/>
+    <variable name="midiMode" value="MPE"/>
+    <variable name="channelFirst" value="2"/>
+    <variable name="channelLast" value="16"/>
+    <variable name="octave" value="0"/>
+    <variable name="tonic" value="C"/>
+    <variable name="scale" value="Custom"/>
+    <variable name="customScale" value="2025"/>
+    <variable name="hideMode" value="false"/>
+    <variable name="pitchbendRange" value="48"/>
+    <variable name="pitchCorrectTime" value="0.2000000000000000111"/>
+    <variable name="trackingMode" value="Last note on channel"/>
+    <variable name="pressType" value="Channel Pressure"/>
+    <variable name="slideCc" value="74"/>
+    <variable name="slideCoef" value="0"/>
+  </mode>
+  <mode name="Default">
+    <variable name="gradientColour1" value="0xFF5082F1"/>
+    <variable name="gradientColour2" value="0xFFE84AB8"/>
+    <variable name="useCustomTrailColour" value="false"/>
+    <variable name="customTrailColour" value="0xFFFFFFFF"/>
+    <variable name="useCustomTonicColour" value="false"/>
+    <variable name="customTonicColour" value="0xFFFFFFFF"/>
+    <variable name="useCustomScaleColour" value="false"/>
+    <variable name="outOfScaleColour" value="0xFF000000"/>
+    <variable name="midiMode" value="MPE"/>
+    <variable name="channelFirst" value="2"/>
+    <variable name="channelLast" value="16"/>
+    <variable name="octave" value="0"/>
+    <variable name="tonic" value="C"/>
+    <variable name="scale" value="Major"/>
+    <variable name="hideMode" value="false"/>
+    <variable name="pitchbendRange" value="48"/>
+    <variable name="pitchCorrectTime" value="0.2000000000000000111"/>
+    <variable name="trackingMode" value="Last note on channel"/>
+    <variable name="pressType" value="Channel Pressure"/>
+    <variable name="slideCc" value="74"/>
+    <variable name="slideCoef" value="0"/>
+  </mode>
+</modes>
+
+
+
+    <groups>
+       <group name="scalesKeys" displayName="Scale &amp; key" />
+       <group name="midiSettings" displayName="MIDI Settings" />
+       <group name="performanceControls" displayName="Performance controls" />
+    </groups>
+
+    <variables>
+      <variable name="gradientColour1" displayName="Gradient Colour 1" type="colour" value="0x0033ff" />
+      <variable name="gradientColour2" displayName="Gradient Colour 2" type="colour" value="0x00ff33" />
+      <variable name="useCustomTrailColour" displayName="Use Custom Trail Colour" type="bool" />
+      <variable name="customTrailColour" displayName="Custom Trail Colour" type="colour" value="0xffffffff"/>
+      <variable name="useCustomTonicColour" displayName="Use Custom Tonic Colour" type="bool" />
+      <variable name="customTonicColour" displayName="Custom Tonic Colour" type="colour" value="0xffffff" />
+      <variable name="useCustomScaleColour" displayName="Use Custom out of Scale Colour" type="bool" />
+      <variable name="outOfScaleColour" displayName="Out Of Scale Colour" type="colour" value="0x000000" />
+
+      <variable name="midiMode"    group="midiSettings" displayName="MIDI Mode"            type="option" value="MPE" options="MPE;Legacy;Single Channel;" />
+      <variable name="channelFirst" group="midiSettings" displayName="Note channel first"   type="option" min="0" max="15" value="2" options="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16" />
+      <variable name="channelLast"  group="midiSettings" displayName="Note channel last"    type="option" min="0" max="15" value="16" options="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16" />
+
+      <variable name="octave"   displayName="Octave"    group="scalesKeys" type="int" min="-2" max="3" value="0" displayMode="stepper"/>
+      <variable name="tonic"    displayName="Key"       group="scalesKeys" type="option" value="C" options="C;C#;D;D#;E;F;F#;G;G#;A;A#;B;"/>
+      <variable name="scale"    displayName="Scale"     group="scalesKeys" type="option" value="Blues" displayMode="multiline" options="Major;Minor;Harmonic Minor;Pentatonic Neutral;Pentatonic Major;Pentatonic Minor;Blues;Dorian;Phrygian;Lydian;Mixolydian;Locrian;Whole Tone;Arabic (A);Arabic (B);Japanese;Ryukyu;8-Tone Spanish;Chromatic;Custom"/>
+      <variable name="customScale"   displayName="Custom Scale"    group="scalesKeys" type="int" min="0" max="4095" value="0"/>
+      <variable name="hideMode" displayName="Hide Mode" group="scalesKeys" type="bool"/>
+
+      <variable name="pitchbendRange"   displayName="Pitchbend range"       group="performanceControls" type="int" min="0" max="96" value="48" displayMode="menu" />
+      <variable name="pitchCorrectTime" displayName="Glide time"            group="performanceControls" type="float" value="0.2" min="0.0" max="1.0" displayMode="slider" />
+      <variable name="trackingMode"     displayName="Tracking Mode"         group="performanceControls" type="option" displayMode="multiline" value="Last note played" options="Last note on channel;Highest note on channel;Lowest note on channel;" />
+      <variable name="pressType"        displayName="Press type"            group="performanceControls" type="option" displayMode="multiline" value="Channel Pressure" options="Channel Pressure;Poly Aftertouch" />
+      <variable name="slideCc"          displayName="Slide CC no."          group="performanceControls" type="int" value="74" min="0" max="127" displayMode="menu" />
+      <variable name="slideCoef"        displayName="Slide curve"           group="performanceControls" type="float" value="0.0" min="-1.0" max="1.0" displayMode="bipolar" />
+    </variables>
+
+    <script onChange="midiMode">
+    <![CDATA[
+      if (midiMode.value == 0)
+      {
+        if (channelFirst.value == 0)
+            channelFirst.value = 1;
+
+        channelFirst.min = 1;
+        channelLast.min = channelFirst.value;
+        channelLast.max = 15;
+        channelLast.enabled = true;
+
+        if (channelLast.value < channelLast.min)
+          channelLast.value = channelLast.min;
+      }
+      else if (midiMode.value == 1)
+      {
+        channelFirst.min = 0;
+        channelLast.min = channelFirst.value;
+        channelLast.max = 15;
+        channelLast.enabled = true;
+      }
+      else if (midiMode.value == 2)
+      {
+        channelFirst.min = 0;
+        channelLast.value = channelFirst.value;
+        channelLast.min = channelFirst.value;
+        channelLast.max = channelFirst.value;
+        channelLast.enabled = false;
+      }
+    ]]>
+    </script>
+
+    <script onChange="channelFirst">
+    <![CDATA[
+      channelLast.min = channelFirst.value;
+
+      if (midiMode.value == 2)
+      {
+        channelLast.value = channelFirst.value;
+        channelLast.max = channelFirst.value;
+      }
+      else if (channelLast.value < channelLast.min)
+      {
+        channelLast.value = channelLast.min;
+      }
+    ]]>
+    </script>
+</metadata>
+*/
+
+#heapsize: 765
+
+//==============================================================================
+/*
+   Heap layout:
+
+   === 25 x Pad ===
+
+   0     4 byte x 25   colours
+   100   1 byte x 25   note numbers
+
+   === 24 x Touch ===
+
+   125   1 byte x 24   corresponding pad index (0xff if none)
+   149   4 byte x 24   initial x positions (for relative pitchbend)
+   245   4 byte x 24   initial y positions (for relative y axis)
+   341   1 byte x 24   MIDI channel assigned
+
+   === 24 x Pitch correction ===
+
+   365   4 byte x 24   start time ms
+   461   4 byte x 24   target x
+   557   4 byte x 24   current x
+   653   4 byte x 24   start x
+
+   === 16 x Channel ===
+
+   749   1 byte x 16   touch to track for this channel (depends on tracking mode)
+
+*/
+//==============================================================================
+
+int gridSize, padWidth, padSpacing;
+int dimFactor, dimDelay, dimDelta;
+int scaleBitmask;
+int numNotesInScale;
+int channelLastAssigned;
+int activePads;
+
+//==============================================================================
+int getClusterOffset()
+{
+    int w = getClusterWidth();
+    int h = getClusterHeight();
+    
+    if (w <= 1 && h <= 1)
+        return 0;
+
+    int x = getClusterXpos() % 4;
+    int y = getClusterYpos() % 4;
+    
+    int numPadsInGrid = (gridSize * gridSize);
+    
+    if (w == 2 && h == 1)
+        return x * numPadsInGrid;
+    else if (w == 1 && h == 2)
+        return y * numPadsInGrid;
+    else
+        return ((x * w) + y) * numPadsInGrid;
+}
+
+//==============================================================================
+void Pad_setColour (int padIndex, int colour)
+{
+    setHeapInt (padIndex * 4, colour);
+}
+
+int Pad_getColour (int padIndex)
+{
+    return getHeapInt (padIndex * 4);
+}
+
+void Pad_setNote (int padIndex, int note)
+{
+    setHeapByte (padIndex + 100, note);
+}
+
+int Pad_getNote (int padIndex)
+{
+    return getHeapByte (padIndex + 100);
+}
+
+void Pad_setActive (int padIndex, bool shouldBeActive)
+{
+    activePads = shouldBeActive ? (activePads | (1 << padIndex))
+                                : (activePads & ~(1 << padIndex));
+}
+
+bool Pad_isActive (int padIndex)
+{
+    return activePads & (1 << padIndex);
+}
+
+bool isAnyPadActive()
+{
+    return activePads;
+}
+
+//==============================================================================
+void Touch_setPad (int touchIndex, int padIndex)
+{
+    setHeapByte (touchIndex + 125, padIndex);
+}
+
+int Touch_getPad (int touchIndex)
+{
+    return getHeapByte (touchIndex + 125);
+}
+
+// Note: littlefoot doesn't have set/getHeapFloat yet, so we store initial x/y
+// positions as ints, scaled up by a factor of 1e6.
+void Touch_setInitialX (int touchIndex, float initialX)
+{
+	setHeapInt ((touchIndex * 4) + 149, int (initialX * 1e6));
+}
+
+float Touch_getInitialX (int touchIndex)
+{
+    return float (getHeapInt ((touchIndex * 4) + 149)) / 1e6;
+}
+
+void Touch_setInitialY (int touchIndex, float initialY)
+{
+	setHeapInt ((touchIndex * 4) + 245, int (initialY * 1e6));
+}
+
+float Touch_getInitialY (int touchIndex)
+{
+    return float (getHeapInt ((touchIndex * 4) + 245)) / 1e6;
+}
+
+void Touch_setChannel (int touchIndex, int channel)
+{
+    setHeapByte (touchIndex + 341, channel);
+}
+
+int Touch_getChannel (int touchIndex)
+{
+    return getHeapByte (touchIndex + 341);
+}
+
+//==============================================================================
+int PitchCorrect_getStartTime (int touchIndex)
+{
+    return getHeapInt ((touchIndex * 4) + 365);
+}
+
+void PitchCorrect_setStartTime (int touchIndex, int timeMs)
+{
+    setHeapInt ((touchIndex * 4) + 365, timeMs);
+}
+
+float PitchCorrect_getLastTargetX (int touchIndex)
+{
+    return float (getHeapInt ((touchIndex * 4) + 461)) / 1e6;
+}
+
+void PitchCorrect_setLastTargetX (int touchIndex, float targetX)
+{
+    setHeapInt ((touchIndex * 4) + 461, int (targetX * 1e6));
+}
+
+float PitchCorrect_updateX (int touchIndex, float newX)
+{
+    int byteIdx = (touchIndex * 4) + 557;
+    float lastX = float (getHeapInt (byteIdx)) / 1e6;
+    setHeapInt (byteIdx, int (newX * 1e6));
+
+    return lastX;
+}
+
+float PitchCorrect_getCurrentX (int touchIndex)
+{
+    return float (getHeapInt ((touchIndex * 4) + 557)) / 1e6;
+}
+
+float PitchCorrect_getStartX (int touchIndex)
+{
+    return float (getHeapInt ((touchIndex * 4) + 653)) / 1e6;
+}
+
+void PitchCorrect_setStartX (int touchIndex, float value)
+{
+    setHeapInt ((touchIndex * 4) + 653, int (value * 1e6));
+}
+
+//==============================================================================
+
+void Channel_setTrackedTouch (int channel, int touchIndex)
+{
+    setHeapByte (channel + 749, touchIndex);
+}
+
+int Channel_getTrackedTouch (int channel)
+{
+    return getHeapByte (channel + 749);
+}
+
+//==============================================================================
+bool isPartOfScale (int noteRelativeToTonic)
+{
+	int noteAsBitSet = 0x01 << (mod (noteRelativeToTonic, 12));
+	return (noteAsBitSet & scaleBitmask) != 0;
+}
+
+int findNthNoteInScale (int n)
+{
+    int mask = 1;
+    int count = 0;
+
+    for (int pos = 0; pos < 12; ++pos)
+    {
+        if (scaleBitmask & mask)
+        {
+            if (count == n)
+                return pos;
+
+            count++;
+        }
+
+        mask <<= 1;
+    }
+
+    return -1;
+}
+
+//==============================================================================
+int getTouchedPad (float x, float y)
+{
+    float yScale = y > 1.0 ? 0.93 : 0.93;
+    float yDelta = y > 1.0 ? 0.05 : 0.133;
+    float xScale = x > 1.0 ? 0.93 : 1.00;
+
+	int col = int (x * (xScale / 2.0) * float (gridSize));
+	int row = int (y * (yScale / 2.0) * float (gridSize) + yDelta);
+
+	return (gridSize * row) + col;
+}
+
+//==============================================================================
+int getNoteForPad (int padIndex)
+{
+    // convert pad index (starting top left) to index in note sequence (starting bottom left):
+    int noteIndex = ((gridSize - 1) - (padIndex / gridSize)) * gridSize + (padIndex % gridSize);
+    noteIndex += getClusterOffset();
+   
+    int lowestNoteIndex = (octave * 12) + tonic + 48;
+
+    if (! hideMode)
+        return noteIndex + lowestNoteIndex;
+
+    return findNthNoteInScale (noteIndex % numNotesInScale) + (noteIndex / numNotesInScale * 12) + lowestNoteIndex;
+
+    /* Note: it is probably cheaper to read the note number off the heap
+       (starting at byte 100) than to call this function.
+       Use this only to initialise the heap, or to compute note numbers
+       for out-of-range pad indices for interpolation.
+    */
+}
+
+//==============================================================================
+int getTrailColour (int padColour)
+{
+    if (useCustomTrailColour) 
+        return customTrailColour;
+    if (padColour == 0xff000000)
+        return 0xffaaaaaa;
+
+    return blendARGB (0x88ffffff, padColour);
+}
+
+//==============================================================================
+void updateDimFactor()
+{
+	if (isAnyPadActive() || dimDelta)
+	{
+	    if (dimFactor < 180)
+	        dimDelta = 60;
+	    else
+	        dimDelta = 0;
+
+		dimFactor += dimDelta;
+		dimDelay = 8;
+	}
+	else
+	{
+		if (--dimDelay <= 0)
+		{
+			dimFactor -= 24;
+
+			if (dimFactor < 0)
+				dimFactor = 0;
+		}
+	}
+}
+
+//==============================================================================
+void drawPad (int x, int y, int colour, int bottomRightCornerDarkeningAmount)
+{
+    int dark = blendARGB (colour, bottomRightCornerDarkeningAmount << 24);
+    int mid  = blendARGB (colour, (bottomRightCornerDarkeningAmount / 2) << 24);
+
+    int w = padWidth - padSpacing;
+    blendGradientRect (colour, mid, dark, mid, x * padWidth, y * padWidth, w, w);
+}
+
+void drawPads()
+{
+    int padIndex = 0;
+
+	for (int padY = 0; padY < gridSize; ++padY)
+	{
+		for (int padX = 0; padX < gridSize; ++padX)
+		{
+		    int overlayColour = Pad_isActive (padIndex) ? 0x66ffffff : (dimFactor << 24);
+
+            drawPad (padX, padY, blendARGB (Pad_getColour (padIndex), overlayColour), 0xcc);
+
+            ++padIndex;
+		}
+	}
+}
+
+
+//==============================================================================
+void initialiseScale()
+{
+	if (scale == 0)        scaleBitmask = 0xab5;  // major
+	else if (scale == 1)   scaleBitmask = 0x5ad;  // minor
+	else if (scale == 2)   scaleBitmask = 0x9ad;  // harmonic minor
+	else if (scale == 3)   scaleBitmask = 0x4a5;  // pentatonic neutral
+	else if (scale == 4)   scaleBitmask = 0x295;  // pentatonic major
+	else if (scale == 5)   scaleBitmask = 0x4a9;  // pentatomic minor
+	else if (scale == 6)   scaleBitmask = 0x4e9;  // blues
+	else if (scale == 7)   scaleBitmask = 0x6ad;  // dorian
+	else if (scale == 8)   scaleBitmask = 0x5ab;  // phrygian
+	else if (scale == 9)   scaleBitmask = 0xad5;  // lydian
+	else if (scale == 10)  scaleBitmask = 0x6b5;  // mixolydian
+	else if (scale == 11)  scaleBitmask = 0x56b;  // locrian
+	else if (scale == 12)  scaleBitmask = 0x555;  // whole tone
+	else if (scale == 13)  scaleBitmask = 0xb6d;  // arabic (A)
+	else if (scale == 14)  scaleBitmask = 0x575;  // arabic (B)
+	else if (scale == 15)  scaleBitmask = 0x8d1;  // japanese
+	else if (scale == 16)  scaleBitmask = 0x8b1;  // ryukyu
+	else if (scale == 17)  scaleBitmask = 0x57b;  // 8-tone spanish
+	else if (scale == 18)  scaleBitmask = 0xfff;  // chromatic
+	else if (scale == 19)  scaleBitmask = customScale;  // custom
+	else                   scaleBitmask = 0xfff;  // default chromatic
+
+    int n = scaleBitmask;
+    n -= ((n >> 1) & 0x5555);
+    n =  (((n >> 2) & 0x3333) + (n & 0x3333));
+    n =  (((n >> 4) + n) & 0x0f0f);
+    n += (n >> 8);
+    numNotesInScale = n & 0x3f;
+}
+
+//==============================================================================
+void initialisePads()
+{
+    for (int padIndex = 0; padIndex < 25; ++padIndex)
+	{
+        // note numbers:
+        int note = getNoteForPad (padIndex);
+        Pad_setNote (padIndex, note);
+
+        // pad colours:
+		// To have a little more individual style, colour of the tonics can be changed if "Use Custom Colours" is activated.
+		// Default value (white) otherwise
+		int padColour = (note > 127) ? 0xFF000000 : ((useCustomTonicColour) ? customTonicColour : 0xFFFFFFFF);
+
+		int noteInScale = mod (note - tonic, 12);
+
+     	if (noteInScale != 0 && note <= 127)
+		{
+		    // not the tonic!
+
+	        if (! hideMode && ! isPartOfScale (noteInScale))
+			{
+			    if (useCustomScaleColour) 
+			        padColour = outOfScaleColour;
+			    else 
+		            padColour = 0xff000000;
+			}
+		    else
+			{
+				int blend = 0xff * (noteInScale - 1) / 10;
+
+				padColour = blendARGB (gradientColour1 | 0xff000000,
+				                       (gradientColour2 & 0x00ffffff) | (blend << 24));
+			}
+		}
+
+        Pad_setColour (padIndex, padColour);
+	}
+
+	activePads = 0;
+}
+
+//==============================================================================
+void initialiseTouches()
+{
+    for (int touchIndex = 0; touchIndex < 24; ++touchIndex)
+    {
+        Touch_setPad (touchIndex, 0xff);
+        Touch_setChannel (touchIndex, 0xff);
+    }
+}
+
+void initialiseChannels()
+{
+	for (int channel = 0; channel < 16; ++channel)
+    {
+	    Channel_setTrackedTouch (channel, 0xff);
+
+	    // Send note-offs for all channels & notes to avoid stuck notes
+        // when modifying dynamic variables from the sidepanel.
+        sendMIDI (0xb0 | channel, 120, 0); // All sound off msg
+        sendMIDI (0xb0 | channel, 123, 0); // All notes off msg
+    }
+}
+
+void initialise()
+{
+	gridSize = 5;
+	padWidth = 15 / gridSize;
+	padSpacing = (15 - gridSize * padWidth) / (gridSize - 1);
+	padWidth += padSpacing;
+
+	dimFactor = 0;
+	dimDelay = 12;
+
+	initialiseScale();
+	initialisePads();
+	initialiseTouches();
+	//initialiseChannels();
+
+	useMPEDuplicateFilter (true);
+	setChannelRange (midiMode == 0, channelFirst, channelLast);
+	for (int i = 0; i < 32; ++i)
+        setLocalConfigActiveState (i, false, false);
+}
+
+//==============================================================================
+void repaint()
+{
+    updatePitchCorrectionOnClock();
+
+	clearDisplay();
+	updateDimFactor();
+
+	if (isConnectedToHost())
+        drawPads();
+
+    // Overlay heatmap
+    drawPressureMap();
+    fadePressureMap();
+}
+
+//==============================================================================
+// The following section is devoted to pitch correction, which causes slide to
+// 'drift' back to the nearest note, helping you stay in tune. It's the most
+// complex part of the program, and the code isn't exactly pretty.
+
+int roundFloat (float f)
+{
+    return int (f > 0 ? f + 0.5 : f - 0.5);
+}
+
+int getPitchwheelValue (int touchIndex, float x)
+{
+    if (pitchbendRange <= 0)
+        return 8192;
+
+    float blockWidthUnits = 2.0;
+    float initialX = Touch_getInitialX (touchIndex);
+    float deltaX = (x - initialX) * (blockWidthUnits + 0.1); // Adjust width by 0.1 as edges are hard to reach
+
+    if (abs (deltaX) > 1.0)
+    {
+        // Initially the note centre is at centre of the finger strike,
+        // but after a significant slide is performed, we want to use the
+        // actual pad centres to avoid confusion about pad boundaries.
+        float divisor = 1.0 / float (gridSize);
+
+        initialX = ((mod (Touch_getPad (touchIndex), gridSize) * divisor) + (divisor * 0.5)) * blockWidthUnits;
+        deltaX = (x - initialX) * (blockWidthUnits + 0.1); // recompute with new initialX
+    }
+
+    deltaX = transformPitchForHideMode (touchIndex, deltaX);
+	deltaX = updatePitchCorrection (touchIndex, deltaX);
+
+	return getPitchWheelFromDeltaX (deltaX);
+}
+
+int getPitchWheelFromDeltaX (float deltaX)
+{
+    // now convert pitchbend in semitones to 14-bit pitchwheel position:
+	float pitchwheel = deltaX > 0.0
+	        ? map (deltaX, 0.0, float (pitchbendRange), 8192.0, 16383.0)
+	        : map (deltaX, float (-pitchbendRange), 0.0, 0.0, 8192.0);
+
+	return clamp (0, 16383, int (pitchwheel));
+}
+
+float transformPitchForHideMode (int touchIndex, float deltaX)
+{
+    if (! hideMode)
+        return deltaX;
+
+    // interpolate between actual pitches of pads left and right to x
+    int deltaXLeft = deltaX < 0 ? int (deltaX) - 1 : int (deltaX);
+    int initialPadIndex = Touch_getPad (touchIndex);
+
+    int padIndexLeft = deltaXLeft + initialPadIndex;
+    int padIndexRight = padIndexLeft + 1;
+
+    // Rows increment going down, not up!
+    // If padIndexLeft/Right is outside the edge of the block, we
+    // need to explicitly add/subtract two rows to compensate.
+    if (mod (padIndexLeft, gridSize) == gridSize - 1)
+    {
+        if (deltaX < 0)
+            padIndexLeft += 2 * gridSize;
+
+        else if (deltaX > 0)
+            padIndexRight -= 2 * gridSize;
+    }
+
+    float pitchLeft  = getNoteForPad (padIndexLeft);
+    float pitchRight = getNoteForPad (padIndexRight);
+    
+    if (pitchLeft < 0 || pitchRight < 0)
+        return pitch;
+
+    float deltaPitch = deltaX - float (deltaXLeft);
+    float pitch = (pitchLeft * (1 - deltaPitch)) + (pitchRight * deltaPitch);
+
+    return pitch - float (Pad_getNote (initialPadIndex));
+}
+
+void updatePitchCorrectionOnClock()
+{
+	// This is called from the paint method, and ensures we drift back to
+	// the right pitch even when the finger is completely stationary
+    if (pitchbendRange > 0)
+    {
+        for (int i = 0; i < 24; ++i)
+        {
+            int channel = Touch_getChannel (i);
+
+            if (channel != 0xff)
+            {
+                float deltaX = updatePitchCorrection (i, PitchCorrect_getCurrentX (i));
+
+                sendPitchBend (channel, getPitchWheelFromDeltaX (deltaX));
+            }
+        }
+    }
+}
+
+float updatePitchCorrection (int touchIndex, float deltaX)
+{
+	float lastX = PitchCorrect_updateX (touchIndex, deltaX);
+	float targetX = getPitchCorrectTarget (touchIndex, deltaX);
+	float lastTargetX = PitchCorrect_getLastTargetX (touchIndex);
+
+	if (abs (targetX - lastTargetX) > 0.02)
+	{
+	    // Changed note band
+		startPitchCorrection (touchIndex, deltaX, targetX, 0);
+	}
+	else
+	{
+	    // Movement within the same note band
+	    float deltaThisFrame = deltaX - lastX;
+
+		if ((deltaThisFrame < -0.02 && deltaX < targetX) || (deltaThisFrame > 0.02 && deltaX > targetX))
+		{
+			// Moving away from target pitch - start correction after delay to prevent fighting
+			startPitchCorrection (touchIndex, deltaX, targetX, 100);
+		}
+		else if (((deltaX < targetX && deltaX > 0) || (deltaX > targetX && deltaX < 0)) && abs (deltaThisFrame) > 0.2)
+		{
+			// Moving towards target pitch, and overtook correction glide
+			startPitchCorrection (touchIndex, deltaX, targetX, 0);
+		}
+	}
+
+	return calculateAdjustedPitch (touchIndex, deltaX, targetX);
+}
+
+int getPitchCorrectTarget (int touchIndex, float x)
+{
+	// Round to nearest whole number
+    int targetDelta = roundFloat (x);
+
+    if (hideMode)
+    {
+        int startPadScaleIndex = getNoteForPad (Touch_getPad (touchIndex)) - tonic;
+        while (! isPartOfScale (targetDelta + startPadScaleIndex))
+            x > 0 ? ++targetDelta : --targetDelta;
+    }
+
+    return targetDelta;
+}
+
+void startPitchCorrection (int touchIndex, float x, float targetX, int delayMs)
+{
+	PitchCorrect_setStartTime (touchIndex, getMillisecondCounter() + delayMs);
+	PitchCorrect_setStartX (touchIndex, x);
+	PitchCorrect_setLastTargetX (touchIndex, targetX);
+}
+
+float calculateAdjustedPitch (int touchIndex, float deltaX, float targetX)
+{
+    int startTimeMs = PitchCorrect_getStartTime (touchIndex);
+	int elapsed = getMillisecondCounter() - startTimeMs;
+	int pitchCorrectTimeMs = int (map (pitchCorrectTime, 0.0, 1.0, 50.0, 2000.0) / (hideMode ? 3 : 1));
+
+	if (elapsed <= 0) // Waiting for delay
+        return deltaX;
+
+    if (elapsed >= pitchCorrectTimeMs) // Finished correction
+        return targetX;
+
+	// Correction in progress
+    float progress = float (elapsed) / float (pitchCorrectTimeMs);
+    float adjustedX = map (progress, 0.0, 1.0, PitchCorrect_getStartX (touchIndex), targetX);
+
+    return adjustedX;
+}
+
+//==============================================================================
+int getYAxisValue (int touchIndex, float y)
+{
+	float initialY = Touch_getInitialY (touchIndex);
+
+	if (y >= initialY)
+	        y = map (y, initialY, 2.0, 0.0, -1.0);
+	    else
+	        y = map (y, 0.0, initialY, 1.0, 0.0);
+
+    y = 0.5 + (0.5 * applyCurve (y));
+
+	return clamp (0, 127, int (y * 127));
+}
+
+float applyCurve (float y) // Expects inputs from -1.0 to 1.0
+{
+    float absY = slideCoef < 0 ? 1.0 - abs (y) : abs(y);
+	float absCoef = abs (slideCoef);
+
+    if (absCoef < 0.01)
+        return y;
+
+	float ky = (16.0 * absCoef / (1.0 + absCoef)) * absY;
+    float curved = (absY + ky) / (1 + ky);
+
+	if (slideCoef < 0)
+	    curved = 1 - curved;
+
+	if (y < 0)
+	    curved = -curved;
+
+    return curved;
+}
+
+//==============================================================================
+bool shouldTrackNewTouch (int channel, int touchIndex, int note)
+{
+    if (trackingMode == 0)
+        return true;  // track last note on channel: new note always overrides old one!
+
+    int previouslyTrackedTouch = Channel_getTrackedTouch (channel);
+
+    if (previouslyTrackedTouch == 0xff)
+        return true;  // channel is free and can track this touch
+
+    int previouslyTrackedNote = Pad_getNote (Touch_getPad (previouslyTrackedTouch));
+
+    if ((trackingMode == 1 && note > previouslyTrackedNote) || (trackingMode == 2 && note < previouslyTrackedNote))
+        return true;  // new note is higher/lower than previous note, and we should track highest/lowest note
+
+    return false;
+}
+
+//==============================================================================
+void touchStart (int touchIndex, float x, float y, float z, float vz)
+{
+    int padIndex = getTouchedPad (x, y);
+    int note = Pad_getNote (padIndex);
+    
+    if (note > 127)
+        return;         // Outside of the nominal range...
+    
+    int colour = Pad_getColour (padIndex);
+    int channel = assignChannel (note);
+
+    int velocity = clamp (1, 127, int (vz * 127.0));
+    int pressure = clamp (0, 127, int (z * 127.0));
+
+    if (pressType == 0)
+    {
+        // send channel pressure message
+        sendMIDI (0xd0 | channel, pressure);
+    }
+    else
+    {
+        // send poly aftertouch message
+        sendMIDI (0xa0 | channel, note, pressure);
+    }
+
+    sendPitchBend (channel, 8192);
+    sendMIDI (0xb0 | channel, slideCc, 64);  // initial Y in relative mode
+    sendNoteOn (channel, note, velocity);
+
+    addPressurePoint (getTrailColour (colour), x, y, z * 10.0);
+
+    Pad_setActive (padIndex, true);
+
+    Touch_setPad (touchIndex, padIndex);
+    Touch_setInitialX (touchIndex, x);
+    Touch_setInitialY (touchIndex, y);
+    Touch_setChannel (touchIndex, channel);
+
+    PitchCorrect_setStartX (touchIndex, 0.0);
+    PitchCorrect_setLastTargetX (touchIndex, 0.0);
+    PitchCorrect_updateX (touchIndex, 0.0);
+
+    if (shouldTrackNewTouch (channel, touchIndex, note))
+        Channel_setTrackedTouch (channel, touchIndex);
+}
+
+void touchMove (int touchIndex, float x, float y, float z, float vz)
+{
+    int padIndex = Touch_getPad (touchIndex);
+
+    if (padIndex == 0xff)
+        return;  // touch was not started.
+
+    int channel = Touch_getChannel (touchIndex);
+
+    if (Channel_getTrackedTouch (channel) != touchIndex)
+        return;  // these are not the touch messages you're looking for...
+
+    int pressure = clamp (0, 127, int (z * 127.0));
+
+    if (pressType == 0)
+    {
+        // send channel pressure message
+        sendMIDI (0xd0 | channel, pressure);
+    }
+    else
+    {
+        // send poly aftertouch message
+        int note = Pad_getNote (padIndex);
+        sendMIDI (0xa0 | channel, note, pressure);
+    }
+
+
+    sendMIDI (0xb0 | channel, slideCc, getYAxisValue (touchIndex, y));
+
+    if (pitchbendRange > 0)
+        sendPitchBend (channel, getPitchwheelValue (touchIndex, x));
+
+    int colour = Pad_getColour (padIndex);
+    addPressurePoint (getTrailColour (colour), x, y, z * 10.0);
+}
+
+void touchEnd (int touchIndex, float x, float y, float z, float vz)
+{
+    int padIndex = Touch_getPad (touchIndex);
+
+    if (padIndex == 0xff)
+        return;  // touch was not started.
+
+    int channel = Touch_getChannel (touchIndex);
+
+    int note = Pad_getNote (padIndex);
+    int velocity = clamp (0, 127, int (vz * 127.0));
+
+    sendNoteOff (channel, note, velocity);
+
+    Pad_setActive (padIndex, false);
+
+    Touch_setPad (touchIndex, 0xff);
+    Touch_setChannel (touchIndex, 0xff);
+
+    Channel_setTrackedTouch (channel, 0xff);
+
+    deassignChannel (note, channel);
+}
