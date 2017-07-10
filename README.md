@@ -17,4 +17,4 @@ You can define a custom Trail colour which will be used regardless of the colour
 
 #### Scale & key
 - **Scale - Custom:** In the scale selector there is a new option called "custom" which lets you select a self defined scale pattern. (Config "Custom Scale")
-- **Custom Scale:** Defines the pattern of your custom scale. Because there is no hex input type you will have to enter the integer representation of a three digit 
+- **Custom Scale:** Defines the pattern of your custom scale. Because there is no hex input type you will have to enter the integer representation of a three digit hex value.
