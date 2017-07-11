@@ -15,6 +15,37 @@ You can define a custom Trail colour which will be used regardless of the colour
 - **Scale - Custom:** In the scale selector there is a new option called "custom" which lets you select a self defined scale pattern. (Config "Custom Scale")
 - **Custom Scale:** Defines the pattern of your custom scale. Because there is no hex input type you will have to enter the integer representation of a three digit hex value.
 
+##### Custom scale
+
+The scale is internally defined as a 3 digit Hex-Value. Or to be more precise a 12 digit bit string. Each of those 12 bits represent a semi tone in the pattern. So 111111111111 (or 0xfff) acivates the pad for each of the twelve semi tones. 
+
+NOTE: It is not possible to define different patterns for the lower/higher octave, the pattern you define repeats for both octaves. (I'm going to look for a workaround on that soon)
+
+The lsb (least significant bit) represents the pad in the lower left corner, going to the right, working its way upwards.
+Let's take the (already existing) major pattern as an example.
+
+We want our Lightpad to look like this (0=inactive/1=active):
+
+0 1 0 1 1
+0 1 1 0 1
+0 1 1 0 1
+1 0 1 0 1
+1 0 1 0 1
+
+See that the pattern is repeating after the first twelve digits. From bottom left to up right:
+101011010101
+101011010101
+1
+
+Now we just need to inverse the bit string, so that our first pad is the lsb.
+=> 101010110101
+
+in hex this comes up to 0xab5
+
+Sadly, the input in ROLI Dashboard only allows for integer inputs, so if you don't want to change this in your .littlefoot file, the "Custom Scale" value must be calculated as an integer. In our case 2741.
+
+It's a bit fiddly, but this makes changing our scale to a self defined pattern possible.
+
 
 ### a$$_mixer_block
 
