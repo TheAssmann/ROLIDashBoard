@@ -21,5 +21,5 @@ You can define a custom Trail colour which will be used regardless of the colour
 Why have a 4 Bar Mixer if you can have one with 5 bars?!
 Same exact file as the default Mixer Block Setup for Lightpad, but with a fifth bar and button added to it.
 
-So, instead of 4 3px wide bars with a 1px spacing in between, there are 5 3px bars without spacing in between. 
+So, instead of four 3px wide bars with a 1px spacing in between, there are five 3px bars without spacing in between. 
 It allows for a second slider colour to be selected. This way the sliders have variing colours, making it easier to differentiate.
