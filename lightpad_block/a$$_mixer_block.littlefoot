@@ -1,0 +1,232 @@
+
+/*
+<metadata description="Use 5 touch faders and 5 buttons, each of which can send MIDI CC." target="Lightpad" tags="MIDI;Mixing;Faders;Buttons;">
+	<groups>
+        <group name="channel" displayName="Channel *" count="5" />
+	</groups>
+	<variables>
+        <variable name="midiChannel" displayName="MIDI Channel" type="int" min="1" max="16" value="1" displayMode="stepper" />
+        <variable name="sliderColour" displayName="Fader colour" type="colour" value="0x003dc5" />
+        <variable name="sliderColour2" displayName="Fader colour 2" type="colour" value="0x047134" />
+        <variable name="buttonColour" displayName="Button colour" type="colour" value="0xa32424" />
+        <vector count="5" group="channel" wantsGetFunctions="true" wantsSetFunctions="true">
+            <variable name="slider" type="int" min="0" max="11" value="0" visible="false" />
+            <variable name="button" displayName="Value" type="int" min="0" max="255" value="0" visible="false" />
+
+            <variable name="behaviour" displayName="Behaviour" type="option" displayMode="multiline" value="Toggle" options="Toggle;Gate;Trigger" />
+            <variable name="buttonCC" displayName="Button CC" type="int" min="0" max="127" value="0" initStart="102" />
+            <variable name="sliderCC" displayName="Fader CC" type="int" min="0" max="127" value="0" initStart="112" />
+			<variable name="sliderMin" displayName="Minimum" type="int" min="0" max="127" value="0" visible="true" />
+			<variable name="sliderMax" displayName="Maximum" type="int" min="0" max="127" value="127" visible="true" />
+
+        </vector>
+        <vector count="16" wantsGetFunctions="true" wantsSetFunctions="true">
+            <variable name="touchType" type="int" min="0" max="127" value="0" visible="false" />
+        </vector>
+
+	</variables>
+</metadata>
+*/
+
+// PC Note - We arent using the heap. Without this statement we end up using too much of the heap...
+#heapsize: 1
+
+const int touchTypeNone   = 0;
+const int touchTypeSlider = 1;
+const int touchTypeButton = 2;
+
+//==============================================================================
+void initialise()
+{
+	for (int i = 0; i < 5; ++i)
+        setSlider (i, 1);
+
+    for (int i = 0; i < 32; ++i)
+        setLocalConfigActiveState (i, false, false);
+}
+
+//==============================================================================
+int channelIndexForX (float x)
+{
+    float x01 = x * 0.5;
+	int ledZone = int (x01 * 15);
+    // Each slider has an area of 3px
+	return ledZone/3;
+}
+
+//==============================================================================
+float getSliderValue01ForTouchAtY (float y)
+{
+    float sliderMax   = 14.0;
+    float sliderMin   = 4.0;
+    float sliderRange = sliderMax - sliderMin;
+
+    float closestLED  = clamp (sliderMin, sliderMax, float (y * 14));
+    float value01     = ((closestLED - sliderMin) / sliderRange);
+    return 1.0 - value01;
+}
+
+//==============================================================================
+int convertSliderValue01ToRange (float slider01, int sliderMin, int sliderMax, int hardMax)
+{
+    return clamp (0x00, hardMax, sliderMin + int (slider01 * float (sliderMax - sliderMin)));
+}
+
+//==============================================================================
+int convertSliderValue01ToOutputRange (int sliderIndex, float slider01)
+{
+    return convertSliderValue01ToRange (slider01, getSliderMin (sliderIndex), getSliderMax (sliderIndex), 0x7F);
+}
+
+//==============================================================================
+void doTouchSlider (int index, float x, float y, float z, float vz)
+{
+ 	int sliderIndex  = channelIndexForX (x);
+    int currentValue = getSlider (sliderIndex);
+    float slider01   = getSliderValue01ForTouchAtY (y * 0.5);
+    int midiValue    = convertSliderValue01ToOutputRange (sliderIndex, slider01);
+    int newValue     = convertSliderValue01ToRange (slider01, 1, 11, 11);
+
+    setSlider (sliderIndex, newValue);
+    sendMIDI (0xB0 | (midiChannel - 1), getSliderCC (sliderIndex), midiValue);
+}
+
+//==============================================================================
+void doTouchButtonDown (int in, float x, float y, float z, float vz)
+{
+    int buttonIndex = channelIndexForX (x);
+    int buttonCC    = getButtonCC (buttonIndex);
+    int behaviour   = getBehaviour (buttonIndex);
+
+    if (behaviour == 0)			// Toggle
+    {
+        setButton (buttonIndex, 255 - getButton (buttonIndex));
+        sendCC (midiChannel - 1, buttonCC, getButton (buttonIndex) / 2);
+    }
+    else if (behaviour == 1)	// Gate
+    {
+        setButton (buttonIndex, 255);
+        sendCC (midiChannel - 1, buttonCC, 0x7F);
+    }
+    else if (behaviour == 2)	// trigger
+    {
+        setButton (buttonIndex, 255);
+        sendCC (midiChannel - 1, buttonCC, 0x7F);
+    }
+}
+
+//==============================================================================
+void doTouchButtonUp (int index, float x, float y, float z, float vz)
+{
+    int buttonIndex = channelIndexForX (x);
+    if (getBehaviour (buttonIndex) == 1)
+	{
+		setButton (buttonIndex, 0);
+		sendCC (midiChannel - 1, getButtonCC (buttonIndex), 0x00);
+	}
+}
+
+//==============================================================================
+bool isTouchingButton (float y)
+{
+    return (int (y * 0.5 * 15.0) <= 2);
+}
+
+//==============================================================================
+bool isValidTouchIndex (int index)
+{
+    return ((index - 1) < 16);
+}
+
+//==============================================================================
+void touchStart (int index, float x, float y, float z, float vz)
+{
+    if (! isValidTouchIndex (index))
+    {
+        return;
+    }
+
+    if (isTouchingButton (y))
+    {
+        doTouchButtonDown (index, x, y, z, vz);
+        setTouchType ((index - 1), touchTypeButton);
+    }
+    else
+    {
+        doTouchSlider (index, x, y, z, vz);
+        setTouchType ((index - 1), touchTypeSlider);
+    }
+}
+
+//==============================================================================
+void touchMove (int index, float x, float y, float z, float vz)
+{
+    if (! isValidTouchIndex (index))
+    {
+        return;
+    }
+
+    if (! isTouchingButton (y))
+    {
+        doTouchSlider (index, x, y, z, vz);
+    }
+}
+
+//==============================================================================
+void touchEnd (int index, float x, float y, float z, float vz)
+{
+    if (! isValidTouchIndex (index))
+    {
+        return;
+    }
+
+    int touchType = getTouchType ((index - 1));
+    if (touchType == touchTypeButton)
+    {
+        doTouchButtonUp (index, x, y, z, vz);
+    }
+    else
+    {
+        doTouchSlider (index, x, y, z, vz);
+    }
+
+    setTouchType ((index - 1), touchTypeNone);
+}
+
+//==============================================================================
+void repaint()
+{
+    fillRect (0x000000, 0, 0, 15, 15);
+
+    for (int channel = 0; channel < 5; ++channel)
+	{
+	    int buttonValue = getButton (channel);
+	    int behaviour   = getBehaviour (channel);
+
+	    if (buttonValue > 0)
+        {
+            if (behaviour == 2)
+            {
+                buttonValue -= 31;
+                if (buttonValue < 0)
+                {
+                    buttonValue = 0;
+                }
+                setButton (channel, buttonValue);
+                sendCC (midiChannel - 1, getButtonCC (channel), buttonValue / 2);
+                blendRect (makeARGB (buttonValue, (buttonColour >> 16) & 0xFF, (buttonColour >> 8) & 0xFF, (buttonColour) & 0xFF), channel * 4, 0, 3, 3);
+            }
+            else
+            {
+                fillRect (buttonColour, channel * 3, 0, 3, 3);
+            }
+        }
+
+ 		int sliderValue  = getSlider (channel);
+ 		// Alternating slider colours for clearer display
+ 		if (channel % 2 == 0)
+ 		    fillRect (sliderColour2, channel * 3,  15 - sliderValue, 3, sliderValue);
+ 		else
+		    fillRect (sliderColour, channel * 3,  15 - sliderValue, 3, sliderValue);
+	}
+}
